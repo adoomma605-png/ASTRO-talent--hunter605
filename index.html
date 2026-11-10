@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080b18">
+  <meta name="description" content="Talent Hunter — discover, share and grow talents.">
+  <title>Talent Hunter</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tus-js-client@4.3.1/dist/tus.min.js"></script>
+</head>
+<body>
+  <div class="ambient ambient-a"></div>
+  <div class="ambient ambient-b"></div>
+  <div class="sparkles" aria-hidden="true"></div>
+
+  <main class="app-shell">
+    <header class="topbar">
+      <button class="brand-button" type="button" onclick="goHome()" aria-label="Go to home">
+        <img src="assets/logo.svg" alt="Talent Hunter logo" class="brand-logo">
+        <span class="brand-copy"><strong>TALENT HUNTER</strong><small>DISCOVER • SHARE • GROW</small></span>
+      </button>
+      <div class="top-status" id="cloudStatus">LOCAL MODE</div>
+    </header>
+
+    <!-- 1. ONBOARDING -->
+    <section class="screen active" id="screen1">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <span class="eyebrow">FIND YOUR STAGE</span>
+          <h1>Show the world<br><span>what you can do.</span></h1>
+          <p>Create a simple profile, choose your talent, and enter a space made for discovering creators.</p>
+          <div class="mini-stats"><span>✦ 12 Talent Categories</span><span>◈ Glass UI</span><span>☁ Cloud Ready</span></div>
+        </div>
+
+        <div class="glass-card form-card">
+          <div class="card-head">
+            <div><div class="kicker">STEP 01</div><h2>Create your profile</h2><p>Tell us who you are.</p></div>
+          </div>
+
+          <div class="choice-row" role="group" aria-label="Account type">
+            <button class="choice-btn" id="talentedBtn" type="button" onclick="selectAccount('Talented')"><span>✦</span> Talented</button>
+            <button class="choice-btn" id="hunterBtn" type="button" onclick="selectAccount('Hunter')"><span>⌕</span> Hunter</button>
+          </div>
+
+          <label class="field"><span>Name</span><div class="input-shell"><span>◯</span><input id="nameInput" type="text" autocomplete="name" placeholder="Your full name" maxlength="60"></div></label>
+
+          <div class="field"><span>Profile photo <em>(optional)</em></span><div class="photo-picker"><label class="avatar" for="photoInput"><img id="photoPreview" src="assets/logo.svg" alt="Profile preview"><span class="camera-badge">＋</span></label><div><label class="soft-btn" for="photoInput">📷 Choose photo</label><input id="photoInput" type="file" accept="image/*" hidden><small>JPG / PNG • optional</small></div></div></div>
+
+          <label class="field"><span>Phone number</span><div class="input-shell"><span>☎</span><input id="phoneInput" type="tel" inputmode="numeric" autocomplete="tel" placeholder="01XXXXXXXXX" maxlength="13"></div><small>Egyptian mobile number, e.g. 01012345678</small></label>
+
+          <button class="primary-btn" type="button" onclick="goToTalent()">Continue <span>→</span></button>
+          <div class="message" id="message1" role="status"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. TALENT -->
+    <section class="screen" id="screen2">
+      <div class="section-wrap narrow">
+        <div class="section-heading"><span class="eyebrow">STEP 02</span><h1>Choose your talent</h1><p>Pick the category that describes what you do.</p></div>
+        <div class="glass-card talent-card"><div class="talent-grid" id="talentGrid"></div><div class="bottom-bar"><div class="message" id="message2" role="status"></div><button class="primary-btn" type="button" onclick="goToCheck()">Next <span>→</span></button></div></div>
+      </div>
+    </section>
+
+    <!-- 3. CHECK -->
+    <section class="screen" id="screen3">
+      <div class="section-wrap narrow">
+        <div class="section-heading"><span class="eyebrow">STEP 03</span><h1>Last check</h1><p>Make sure the details below are correct.</p></div>
+        <div class="glass-card check-card">
+          <div class="check-row"><span>Account type</span><strong id="checkAccount">—</strong></div>
+          <div class="check-row"><span>Name</span><strong id="checkName">—</strong></div>
+          <div class="check-row"><span>Talent</span><strong id="checkTalent">—</strong></div>
+          <div class="check-row"><span>Phone number</span><strong id="checkPhone">—</strong></div>
+          <div class="check-photo-wrap"><span>Profile photo</span><img id="checkPhoto" src="assets/logo.svg" alt="Profile photo preview"></div>
+          <div class="actions"><button class="secondary-btn" type="button" onclick="showScreen(2)">← Back</button><button class="primary-btn" type="button" onclick="confirmData()">All is correct <span>✓</span></button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. HOME -->
+    <section class="screen" id="screen4">
+      <div class="home-wrap">
+        <div class="welcome-pill">✦ YOUR TALENT. YOUR STAGE.</div>
+        <h1>Welcome to <span>Talent Hunter</span></h1>
+        <p>A cleaner, faster place to share talent and discover creators.</p>
+        <div class="home-actions">
+          <button class="home-action pink" type="button" onclick="shareTalent()"><span class="action-icon">☁</span><div><strong>Share My Talent</strong><small>Post a photo, video or audio</small></div><b>→</b></button>
+          <button class="home-action blue" type="button" onclick="watchTalents()"><span class="action-icon">▷</span><div><strong>Watch Other Talents</strong><small>Search by name or category</small></div><b>→</b></button>
+        </div>
+        <div class="home-foot"><span>12 categories</span><span>•</span><span>Search</span><span>•</span><span>Cloud ready</span></div>
+      </div>
+    </section>
+
+    <!-- 5. SHARE -->
+    <section class="screen" id="screen5">
+      <div class="section-wrap medium">
+        <div class="section-heading"><span class="eyebrow">CREATE POST</span><h1>Share your talent</h1><p>Your category: <strong id="shareTalentType">—</strong></p></div>
+        <div class="glass-card share-card">
+          <label for="talentFile" class="upload-zone" id="uploadBox"><div id="uploadPrompt"><span>☁</span><strong>Drop or choose a photo, video or audio</strong><small>Images, MP4, MP3, WAV, M4A and more • Up to 50 MB</small></div><img class="media-preview" id="shareImagePreview" alt="Selected media preview"><video class="media-preview" id="shareVideoPreview" controls playsinline></video><audio class="media-preview audio-preview" id="shareAudioPreview" controls></audio></label>
+          <input id="talentFile" type="file" accept="image/*,video/*,audio/*,.mp3,.wav,.m4a,.aac,.ogg,.opus,.flac" hidden>
+          <label class="field"><span>Caption <em>(optional)</em></span><textarea id="shareDescription" maxlength="500" placeholder="Tell people a little about this talent..."></textarea></label>
+          <div class="actions"><button class="secondary-btn" type="button" onclick="showScreen(4)">← Back</button><button class="primary-btn" type="button" onclick="publishTalent()">Publish <span>➤</span></button></div>
+          <div class="upload-progress" id="uploadProgress" hidden aria-live="polite"><div class="upload-progress-top"><span id="uploadProgressText">Preparing upload…</span><strong id="uploadProgressPercent">0%</strong></div><div class="progress-track"><div class="progress-fill" id="uploadProgressFill"></div></div></div>
+          <div class="message" id="shareMessage" role="status"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. DISCOVER -->
+    <section class="screen feed-screen" id="screen6">
+      <div class="feed-shell">
+        <div class="feed-toolbar" aria-label="Talent filters">
+          <div class="feed-search-row">
+            <div class="search-shell"><span>⌕</span><input id="talentSearch" type="search" oninput="filterTalents()" placeholder="Search talents..."><button type="button" onclick="clearSearch()" aria-label="Clear search">×</button></div>
+            <button class="icon-btn" type="button" onclick="closeFeed()" aria-label="Close">×</button>
+          </div>
+          <div class="categories" id="categories" aria-label="Talent categories"></div>
+        </div>
+
+        <div class="feed-stage" id="feed">
+          <div class="feed-empty" id="feedEmpty"><div class="empty-icon">◈</div><h3>No talents to show yet</h3><p>Publish a talent to see it here. The page also works in local demo mode.</p><button class="secondary-btn" type="button" onclick="shareTalent()">Create first post</button></div>
+        </div>
+</div>
+    </section>
+  </main>
+  <script src="js/script.js"></script>
+</body>
+</html>
